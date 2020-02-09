@@ -5,7 +5,7 @@ module;
 #include "httplib.h"
 #undef SOUP_INCLUDES
 
-export module httplib;
+export module HttpLib;
 
 // Include the implementation
 #include "httplib.h"
