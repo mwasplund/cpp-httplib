@@ -5,6 +5,8 @@
 //  MIT License
 //
 
+#if !defined(SOUP_BUILD) || defined(SOUP_INCLUDES)
+
 #ifndef CPPHTTPLIB_HTTPLIB_H
 #define CPPHTTPLIB_HTTPLIB_H
 
@@ -178,10 +180,20 @@ inline const unsigned char *ASN1_STRING_get0_data(const ASN1_STRING *asn1) {
 #include <zlib.h>
 #endif
 
+#endif // !defined(SOUP_BUILD) || defined(SOUP_INCLUDES)
+
+#if !defined(SOUP_BUILD) || !defined(SOUP_INCLUDES)
+
+#ifdef SOUP_BUILD
+  #define SOUP_EXPORT export
+#else
+  #define SOUP_EXPORT
+#endif
+
 /*
  * Declaration
  */
-namespace httplib {
+SOUP_EXPORT namespace httplib {
 
 namespace detail {
 
@@ -4750,3 +4762,5 @@ inline bool SSLClient::check_host_name(const char *pattern,
 } // namespace httplib
 
 #endif // CPPHTTPLIB_HTTPLIB_H
+
+#endif // !defined(SOUP_BUILD) || !defined(SOUP_INCLUDES)
