@@ -2516,10 +2516,7 @@ public:
   ~WSInit() { WSACleanup(); }
 };
 
-// TODO: HUH?
-#ifndef SOUP_BUILD
-static WSInit wsinit_;
-#endif
+WSInit wsinit_;
 #endif
 
 } // namespace detail
