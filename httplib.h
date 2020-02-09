@@ -5,10 +5,14 @@
 //  MIT License
 //
 
-#if !defined(SOUP_BUILD) || defined(SOUP_INCLUDES)
-
 #ifndef CPPHTTPLIB_HTTPLIB_H
 #define CPPHTTPLIB_HTTPLIB_H
+
+#ifdef SOUP_BUILD
+  #define SOUP_EXPORT export
+#else
+  #define SOUP_EXPORT
+#endif
 
 /*
  * Configuration
@@ -59,6 +63,9 @@
        : 2)
 #endif
 
+// Moved into global module
+#ifndef SOUP_BUILD
+
 /*
  * Headers
  */
@@ -73,11 +80,6 @@
 #endif //_CRT_NONSTDC_NO_DEPRECATE
 
 #if defined(_MSC_VER)
-#ifdef _WIN64
-using ssize_t = __int64;
-#else
-using ssize_t = int;
-#endif
 
 #if _MSC_VER < 1900
 #define snprintf _snprintf_s
@@ -112,7 +114,6 @@ using ssize_t = int;
 #define strcasecmp _stricmp
 #endif // strcasecmp
 
-using socket_t = SOCKET;
 #ifdef CPPHTTPLIB_USE_POLL
 #define poll(fds, nfds, timeout) WSAPoll(fds, nfds, timeout)
 #endif
@@ -180,15 +181,22 @@ inline const unsigned char *ASN1_STRING_get0_data(const ASN1_STRING *asn1) {
 #include <zlib.h>
 #endif
 
-#endif // !defined(SOUP_BUILD) || defined(SOUP_INCLUDES)
+#endif // !SOUP_BUILD
 
-#if !defined(SOUP_BUILD) || !defined(SOUP_INCLUDES)
+/*
+ * Platform specific config
+ */
 
-#ifdef SOUP_BUILD
-  #define SOUP_EXPORT export
+#if defined(_MSC_VER)
+#ifdef _WIN64
+using ssize_t = __int64;
 #else
-  #define SOUP_EXPORT
+using ssize_t = int;
 #endif
+
+using socket_t = SOCKET;
+
+#endif // _MSC_VER
 
 /*
  * Declaration
@@ -335,11 +343,11 @@ struct Response {
       size_t length,
       std::function<void(size_t offset, size_t length, DataSink &sink)>
           provider,
-      std::function<void()> resource_releaser = [] {});
+      std::function<void()> resource_releaser);
 
   void set_chunked_content_provider(
       std::function<void(size_t offset, DataSink &sink)> provider,
-      std::function<void()> resource_releaser = [] {});
+      std::function<void()> resource_releaser);
 
   Response() = default;
   Response(const Response &) = default;
@@ -2508,7 +2516,10 @@ public:
   ~WSInit() { WSACleanup(); }
 };
 
+// TODO: HUH?
+#ifndef SOUP_BUILD
 static WSInit wsinit_;
+#endif
 #endif
 
 } // namespace detail
@@ -4760,7 +4771,5 @@ inline bool SSLClient::check_host_name(const char *pattern,
 // ----------------------------------------------------------------------------
 
 } // namespace httplib
-
-#endif // CPPHTTPLIB_HTTPLIB_H
 
 #endif // !defined(SOUP_BUILD) || !defined(SOUP_INCLUDES)
