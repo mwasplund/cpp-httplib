@@ -710,6 +710,8 @@ public:
 
   void set_keep_alive_max_count(size_t count);
 
+  void set_auth_token(const char *scheme, const char *token);
+
   void set_basic_auth(const char *username, const char *password);
 
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
@@ -750,6 +752,8 @@ protected:
 
   size_t keep_alive_max_count_ = CPPHTTPLIB_KEEPALIVE_MAX_COUNT;
 
+  std::string auth_scheme_;
+  std::string auth_token_;
   std::string basic_auth_username_;
   std::string basic_auth_password_;
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
@@ -782,6 +786,8 @@ protected:
     read_timeout_sec_ = rhs.read_timeout_sec_;
     read_timeout_usec_ = rhs.read_timeout_usec_;
     keep_alive_max_count_ = rhs.keep_alive_max_count_;
+    auth_scheme_ = rhs.auth_scheme_;
+    auth_token_ = rhs.auth_token_;
     basic_auth_username_ = rhs.basic_auth_username_;
     basic_auth_password_ = rhs.basic_auth_password_;
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
@@ -2536,12 +2542,21 @@ inline std::pair<std::string, std::string> make_range_header(Ranges ranges) {
 }
 
 inline std::pair<std::string, std::string>
+make_authentication_header(const std::string &scheme,
+                           const std::string &token,
+                           bool is_proxy = false) {
+  auto field = scheme + " " + token;
+  auto key = is_proxy ? "Proxy-Authorization" : "Authorization";
+  return std::make_pair(key, field);
+}
+
+inline std::pair<std::string, std::string>
 make_basic_authentication_header(const std::string &username,
                                  const std::string &password,
                                  bool is_proxy = false) {
-  auto field = "Basic " + detail::base64_encode(username + ":" + password);
-  auto key = is_proxy ? "Proxy-Authorization" : "Authorization";
-  return std::make_pair(key, field);
+  auto scheme = "Basic";
+  auto token = detail::base64_encode(username + ":" + password);
+  return make_authentication_header(scheme, token, is_proxy);
 }
 
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
@@ -3821,6 +3836,11 @@ inline bool Client::write_request(Stream &strm, const Request &req,
     }
   }
 
+  if (!auth_scheme_.empty() && !auth_token_.empty()) {
+    headers.insert(make_authentication_header(
+        auth_scheme_, auth_token_, false));
+  }
+
   if (!basic_auth_username_.empty() && !basic_auth_password_.empty()) {
     headers.insert(make_basic_authentication_header(
         basic_auth_username_, basic_auth_password_, false));
@@ -4278,6 +4298,11 @@ inline void Client::set_read_timeout(time_t sec, time_t usec) {
 
 inline void Client::set_keep_alive_max_count(size_t count) {
   keep_alive_max_count_ = count;
+}
+
+inline void Client::set_auth_token(const char *scheme, const char *token) {
+  auth_scheme_ = scheme;
+  auth_token_ = token;
 }
 
 inline void Client::set_basic_auth(const char *username, const char *password) {
