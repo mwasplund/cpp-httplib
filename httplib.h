@@ -201,7 +201,7 @@ using socket_t = SOCKET;
 /*
  * Declaration
  */
-SOUP_EXPORT namespace httplib {
+namespace httplib {
 
 namespace detail {
 
@@ -575,7 +575,7 @@ private:
   Logger logger_;
 };
 
-class Client {
+SOUP_EXPORT class Client {
 public:
   explicit Client(const std::string &host, int port = 80,
                   const std::string &client_cert_path = std::string(),
