@@ -1,3 +1,27 @@
 Name = "httplib"
 Version = "1.0.0"
 Public = "Module.cpp"
+IncludePaths = [
+    "../openssl/include/",
+]
+Defines = [
+    "CPPHTTPLIB_OPENSSL_SUPPORT",
+]
+LinkLibraries = [
+    # Link against the dynamic libraries
+    "D:/Repos/Soup/Dependencies/openssl/libcrypto.lib",
+    "D:/Repos/Soup/Dependencies/openssl/libssl.lib",
+    # Link against the static version
+    # "D:/Repos/Soup/Dependencies/openssl/libcrypto_static.lib",
+    # "D:/Repos/Soup/Dependencies/openssl/libssl_static.lib",
+    # "WS2_32.LIB",
+    # "GDI32.LIB",
+    # "ADVAPI32.LIB",
+    # "CRYPT32.LIB",
+    # "USER32.LIB",
+]
+RuntimeDependencies = [
+    # Copy the dynamic libraries
+    "D:/Repos/Soup/Dependencies/openssl/libcrypto-3.dll",
+    "D:/Repos/Soup/Dependencies/openssl/libssl-3.dll",
+]

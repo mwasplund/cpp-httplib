@@ -881,7 +881,7 @@ private:
   std::mutex ctx_mutex_;
 };
 
-class SSLClient : public Client {
+SOUP_EXPORT class SSLClient : public Client {
 public:
   SSLClient(const std::string &host, int port = 443,
             const std::string &client_cert_path = std::string(),
