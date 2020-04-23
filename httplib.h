@@ -1007,7 +1007,7 @@ inline size_t to_utf8(int code, char *buff) {
 
 // NOTE: This code came up with the following stackoverflow post:
 // https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c
-inline std::string base64_encode(const std::string &in) {
+SOUP_EXPORT inline std::string base64_encode(const std::string &in) {
   static const auto lookup =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -2024,7 +2024,7 @@ inline bool redirect(T &cli, const Request &req, Response &res,
   return ret;
 }
 
-inline std::string encode_url(const std::string &s) {
+SOUP_EXPORT inline std::string encode_url(const std::string &s) {
   std::string result;
 
   for (auto i = 0; s[i]; i++) {
@@ -2500,7 +2500,7 @@ inline std::string MD5(const std::string &s) {
                                  MD5_DIGEST_LENGTH);
 }
 
-inline std::string SHA_256(const std::string &s) {
+SOUP_EXPORT inline std::string SHA_256(const std::string &s) {
   return message_digest<SHA256_CTX>(s, SHA256_Init, SHA256_Update, SHA256_Final,
                                     SHA256_DIGEST_LENGTH);
 }
