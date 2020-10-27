@@ -2,6 +2,7 @@ Name = "httplib"
 Language = "C++"
 Version = "1.0.0"
 Interface = "Module.cpp"
+EnableWarningsAsErrors = false
 IncludePaths = [
 	"../openssl/include/",
 ]
